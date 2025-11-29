@@ -7,7 +7,6 @@ import { useState } from "react";
 interface TanStackProviderProps {
   children: React.ReactNode;
 }
-
 export default function TanStackProvider({ children }: TanStackProviderProps) {
   const [queryClient] = useState(() => new QueryClient());
 
