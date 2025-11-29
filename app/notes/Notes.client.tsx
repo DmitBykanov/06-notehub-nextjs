@@ -17,16 +17,8 @@ import NoteForm from "@/components/NoteForm/NoteForm";
 import css from "./NotesPage.module.css";
 
 const NOTES_PER_PAGE = 12;
-const Loader = () => <p>Loading, please wait...</p>;
-const ErrorMessage = () => (
-  <p>Could not fetch the list of notes. Something went wrong!</p>
-);
 
-type NotesProps = {
-  initialData: FetchNotesResponse;
-};
-
-function NotesClient({ initialData }: NotesProps) {
+export default function NotesClient() {
   const perPage = NOTES_PER_PAGE;
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -41,16 +33,10 @@ function NotesClient({ initialData }: NotesProps) {
     queryFn: () =>
       fetchNotes({
         page: currentPage,
-        perPage: perPage,
+        perPage,
         search: debouncedSearch,
       }),
     placeholderData: keepPreviousData,
-    initialData: () => {
-      if (currentPage === 1 && debouncedSearch === "") {
-        return initialData;
-      }
-      return undefined;
-    },
   });
 
   const notes = data?.notes ?? [];
@@ -61,14 +47,19 @@ function NotesClient({ initialData }: NotesProps) {
     setCurrentPage(1);
   };
 
-  if (isError) return <ErrorMessage />;
+  if (isError) {
+    return <p>Could not fetch the list of notes. Something went wrong!</p>;
+  }
 
-  if (isLoading && !data) return <Loader />;
+  if (isLoading && !data) {
+    return <p>Loading, please wait...</p>;
+  }
 
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
         <SearchBox value={search} onChange={handleSearchChange} />
+
         {totalPages > 1 && (
           <Pagination
             pageCount={totalPages}
@@ -76,6 +67,7 @@ function NotesClient({ initialData }: NotesProps) {
             onPageChange={setCurrentPage}
           />
         )}
+
         <button className={css.button} onClick={() => setIsModalOpen(true)}>
           Create note +
         </button>
@@ -97,5 +89,3 @@ function NotesClient({ initialData }: NotesProps) {
     </div>
   );
 }
-
-export default NotesClient;

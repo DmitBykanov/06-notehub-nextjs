@@ -4,36 +4,24 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchNoteById } from "@/lib/api";
 import type { Note } from "@/types/note";
 import css from "./NoteDetails.module.css";
-// import axios from "axios";
 
 type NoteDetailsProps = {
   id: string;
-  initialNote: Note | null;
 };
 
-const NoteDetailsClient: React.FC<NoteDetailsProps> = ({ id, initialNote }) => {
-  const QUERY_KEY = ["note", id];
-
+export default function NoteDetailsClient({ id }: NoteDetailsProps) {
   const {
     data: note,
     isLoading,
     isError,
   } = useQuery<Note>({
-    queryKey: QUERY_KEY,
+    queryKey: ["note", id],
     queryFn: () => fetchNoteById(id),
-
-    placeholderData: initialNote || undefined,
-
     staleTime: 5 * 60 * 1000,
   });
 
-  if (isLoading) {
-    return <p>Loading, please wait...</p>;
-  }
-
-  if (isError || !note) {
-    return <p>Something went wrong.</p>;
-  }
+  if (isLoading) return <p>Loading, please wait...</p>;
+  if (isError || !note) return <p>Something went wrong.</p>;
 
   return (
     <div className={css.container}>
@@ -43,11 +31,9 @@ const NoteDetailsClient: React.FC<NoteDetailsProps> = ({ id, initialNote }) => {
         </div>
         <p className={css.content}>{note.content}</p>
         <p className={css.date}>
-          Created date: {new Date(note.createdAt).toLocaleDateString()}
+          Created: {new Date(note.createdAt).toLocaleDateString()}
         </p>
       </div>
     </div>
   );
-};
-
-export default NoteDetailsClient;
+}
