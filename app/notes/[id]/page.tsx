@@ -7,7 +7,7 @@ import { fetchNoteById } from "@/lib/api";
 import NoteDetailsClient from "./NoteDetails.client";
 
 type NoteDetailsPageProps = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export const dynamic = "force-dynamic";
